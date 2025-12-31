@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stakeholder Analysis - Mobile Friendly</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #1a472a;
+            --primary-light: #2ecc71;
+            --orange: #e67e22;
+            --cream: #faf8f3;
+            --text-dark: #2c3e50;
+            --text-medium: #5a6c7d;
+            --border: #e0e7ed;
+            --success: #27ae60;
+            --error: #e74c3c;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #ffffff 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 0.5rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(26, 71, 42, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: white;
+            padding: 8px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 1rem;
+        }
+
+        .warning-box {
+            background: rgba(230, 126, 34, 0.1);
+            border: 2px solid var(--orange);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-box strong {
+            color: var(--orange);
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px; /* Prevents zoom on iOS */
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        .section {
+            margin: 2rem 0;
+        }
+
+        .section h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            color: var(--text-medium);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stakeholder-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .stakeholder-card.selected {
+            border-color: var(--primary-light);
+            background: rgba(46, 204, 113, 0.05);
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
+        }
+
+        .stakeholder-card.placed {
+            opacity: 0.4;
+            background: #f8f9fa;
+        }
+
+        .stakeholder-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stakeholder-number {
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-size: 0.95rem;
+        }
+
+        .stakeholder-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .quadrant-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .quadrant-btn {
+            padding: 0.75rem 0.5rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.3;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quadrant-btn:active {
+            transform: scale(0.95);
+        }
+
+        .quadrant-btn.high-high {
+            border-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .quadrant-btn.high-high:active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .quadrant-btn.high-low {
+            border-color: #f39c12;
+            color: #d68910;
+        }
+
+        .quadrant-btn.high-low:active {
+            background: #f39c12;
+            color: white;
+        }
+
+        .quadrant-btn.low-high {
+            border-color: #3498db;
+            color: #2980b9;
+        }
+
+        .quadrant-btn.low-high:active {
+            background: #3498db;
+            color: white;
+        }
+
+        .quadrant-btn.low-low {
+            border-color: #95a5a6;
+            color: #7f8c8d;
+        }
+
+        .quadrant-btn.low-low:active {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .placement-summary {
+            background: var(--cream);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .placement-summary h4 {
+            font-family: 'Crimson Pro', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .quadrant-summary {
+            margin-bottom: 1.25rem;
+        }
+
+        .quadrant-summary-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .placed-stakeholders {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .placed-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remove-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .justification-section {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .justification-section h4 {
+            font-family: 'Crimson Pro', serif;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px; /* Prevents zoom on iOS */
+            font-family: 'DM Sans', sans-serif;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        .justification-options {
+            margin-top: 1rem;
+        }
+
+        .justification-option {
+            display: block;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .justification-option.selected {
+            border-color: var(--primary-light);
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .justification-option input[type="radio"] {
+            margin-right: 0.75rem;
+            transform: scale(1.2);
+        }
+
+        .justification-text {
+            display: inline;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .error-message, .success-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--error);
+            color: var(--error);
+        }
+
+        .success-message {
+            background: rgba(39, 174, 96, 0.1);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.125rem;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .grade-display {
+            background: linear-gradient(135deg, var(--primary) 0%, #2d5a3d 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .grade-display h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .grade-display p {
+            font-size: 1.05rem;
+            opacity: 0.9;
+        }
+
+        .grade-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .grade-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .grade-item-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-bottom: 0.25rem;
+        }
+
+        .grade-item-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .instruction-hint {
+            background: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--primary-light);
+            padding: 0.875rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .content {
+                padding: 0.875rem;
+            }
+            
+            .section h3 {
+                font-size: 1.15rem;
+            }
+            
+            .quadrant-btn {
+                font-size: 0.7rem;
+                padding: 0.625rem 0.375rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const STAKEHOLDERS = [
+            { id: 1, name: "Provincial Police Commanding Officer", correctQuadrant: "highLow" },
+            { id: 2, name: "ICT Lab Trainer or Local Tech Volunteer", correctQuadrant: "lowHigh" },
+            { id: 3, name: "Traditional Chief or Senior Headman", correctQuadrant: "highLow" },
+            { id: 4, name: "Maintenance Worker from a Neighboring Facility", correctQuadrant: "lowLow" },
+            { id: 5, name: "Permanent Secretary – Ministry of Youth, Sport & Arts", correctQuadrant: "highHigh" },
+            { id: 6, name: "Neighborhood Watch Group Chairperson", correctQuadrant: "lowLow" },
+            { id: 7, name: "International Donor or Funder Representative (e.g., UNICEF, EU, GIZ)", correctQuadrant: "highHigh" },
+            { id: 8, name: "Local CBO Representative (working with out-of-school youth)", correctQuadrant: "lowHigh" }
+        ];
+
+        const QUADRANTS = {
+            highHigh: { name: "High Power – High Interest", desc: "Manage Closely", shortName: "H-Pwr, H-Int" },
+            highLow: { name: "High Power – Low Interest", desc: "Keep Satisfied", shortName: "H-Pwr, L-Int" },
+            lowHigh: { name: "Low Power – High Interest", desc: "Keep Informed", shortName: "L-Pwr, H-Int" },
+            lowLow: { name: "Low Power – Low Interest", desc: "Monitor", shortName: "L-Pwr, L-Int" }
+        };
+
+        const JUSTIFICATIONS = {
+            1: {
+                correct: "The Provincial Police Commanding Officer has high power through authority over security and public safety matters but relatively low interest in the day-to-day operations of youth development programs. They should be kept satisfied through formal briefings and security protocols to ensure they don't become blockers, while not requiring deep involvement in project decisions.",
+                options: [
+                    "The Provincial Police Commanding Officer has high power through authority over security and public safety matters but relatively low interest in the day-to-day operations of youth development programs. They should be kept satisfied through formal briefings and security protocols to ensure they don't become blockers, while not requiring deep involvement in project decisions.",
+                    "The police officer has high power and high interest because they are deeply invested in youth programs and community safety. They must be managed closely as active partners in all project decisions and daily operations.",
+                    "This stakeholder has low power over development projects and low interest in youth centers. They should only be monitored occasionally for any security concerns that might arise.",
+                    "The police commanding officer has low power but high interest in community youth initiatives. They should be kept informed regularly about project activities to maintain their enthusiasm and support."
+                ]
+            },
+            2: {
+                correct: "The ICT Lab Trainer has low power as they have limited decision-making authority but high interest in the digital skills component of the project. They should be kept informed and engaged as they will directly implement training programs and their expertise and enthusiasm can support project success.",
+                options: [
+                    "The ICT Lab Trainer has high power through technical expertise and high interest in youth development. They must be managed closely as they control the technology infrastructure and training curriculum.",
+                    "This trainer has high power to influence outcomes but low interest as it's just a job. They should be kept satisfied through adequate resources and support without requiring constant engagement.",
+                    "The ICT Lab Trainer has low power as they have limited decision-making authority but high interest in the digital skills component of the project. They should be kept informed and engaged as they will directly implement training programs and their expertise and enthusiasm can support project success.",
+                    "This volunteer has low power and low interest as they can be easily replaced. They should be monitored to ensure they're showing up but don't warrant significant engagement or resources."
+                ]
+            },
+            3: {
+                correct: "The Traditional Chief has high power through community influence and cultural authority, but relatively low interest in daily project operations and modern youth development programs. They should be kept satisfied through respectful engagement, cultural protocols, and periodic updates to maintain their blessing without requiring constant involvement in project management.",
+                options: [
+                    "The Traditional Chief has high power through community influence and cultural authority, but relatively low interest in daily project operations and modern youth development programs. They should be kept satisfied through respectful engagement, cultural protocols, and periodic updates to maintain their blessing without requiring constant involvement in project management.",
+                    "The Traditional Chief has high power and high interest in all community development initiatives. They must be managed closely with active involvement in all decisions, as they can mobilize or oppose community support and their engagement is essential for project success.",
+                    "Traditional chiefs have symbolic power but no real authority in modern development projects and low interest in youth programs. They should only be monitored to ensure they don't create opposition in the community.",
+                    "The chief has low power in formal project structures but high interest in community youth welfare. They should be kept informed regularly about project activities to leverage their grassroots connections and community insights."
+                ]
+            },
+            4: {
+                correct: "The Maintenance Worker has low power as they have no decision-making authority and low interest as they are not directly affected by the project. They should be monitored in case they can provide practical insights about facilities management or become a user of the center.",
+                options: [
+                    "The Maintenance Worker has high power over facility operations and high interest in center success. They must be managed closely as they ensure the physical infrastructure works and can shut down operations if facilities fail.",
+                    "This worker has high power through control of building access but low interest in youth programs. They should be kept satisfied through clear maintenance protocols and adequate resources.",
+                    "The Maintenance Worker has low power as they have no decision-making authority and low interest as they are not directly affected by the project. They should be monitored in case they can provide practical insights about facilities management or become a user of the center.",
+                    "This stakeholder has low power but high interest as they care about community facilities. They should be kept informed about center operations and maintenance needs to leverage their expertise."
+                ]
+            },
+            5: {
+                correct: "The Permanent Secretary has high power through budgetary control, policy influence, and ministerial authority over youth programs, and high interest in youth development aligned with ministry mandates. They must be managed closely as they can secure funding, provide policy support, and ensure government buy-in for project sustainability.",
+                options: [
+                    "The Permanent Secretary has high power through budgetary control, policy influence, and ministerial authority over youth programs, and high interest in youth development aligned with ministry mandates. They must be managed closely as they can secure funding, provide policy support, and ensure government buy-in for project sustainability.",
+                    "The Permanent Secretary has high power but low interest as youth programs are just one of many ministry priorities. They should be kept satisfied through quarterly reports and formal updates without requiring deep engagement.",
+                    "This official has low power as decisions require minister approval, and low interest as they focus on policy not implementation. They should be monitored for any policy changes that might affect the project.",
+                    "The Permanent Secretary has low power in day-to-day operations but high interest in visible community impact. They should be kept informed for photo opportunities and public recognition without involving them in management."
+                ]
+            },
+            6: {
+                correct: "The Neighborhood Watch Chairperson has low power as they have limited formal authority and low interest as their focus is primarily on crime prevention rather than youth development programs. They should be monitored in case community security issues arise, but don't require regular engagement or detailed project updates.",
+                options: [
+                    "The Neighborhood Watch Chairperson has high power through community mobilization and high interest in youth safety programs. They must be managed closely as they can influence local acceptance and provide grassroots security support.",
+                    "This chairperson has high power to block the project through community opposition but low interest in youth development. They should be kept satisfied through courtesy updates and respect for their community role.",
+                    "The Neighborhood Watch Chairperson has low power as they have limited formal authority and low interest as their focus is primarily on crime prevention rather than youth development programs. They should be monitored in case community security issues arise, but don't require regular engagement or detailed project updates.",
+                    "This stakeholder has low power but high interest in community youth welfare and safety. They should be kept informed regularly as they can mobilize volunteers and provide local insights on security needs."
+                ]
+            },
+            7: {
+                correct: "The International Donor has high power through funding control and technical expertise, and high interest in successful project outcomes and development impact. They must be managed closely as they provide financial resources, require regular reporting, influence project design, and their continued support is essential for implementation and potential scaling.",
+                options: [
+                    "The International Donor has high power through funding control and technical expertise, and high interest in successful project outcomes and development impact. They must be managed closely as they provide financial resources, require regular reporting, influence project design, and their continued support is essential for implementation and potential scaling.",
+                    "The donor has high power to withdraw funding but low interest in daily operations once funds are disbursed. They should be kept satisfied through annual reports and financial audits without constant engagement.",
+                    "International donors have low power as they must respect national sovereignty, and low interest beyond their funding cycle. They should be monitored for future funding opportunities but don't warrant significant ongoing engagement.",
+                    "The donor has low power in project implementation but high interest in impact and visibility. They should be kept informed through success stories and data for their reporting needs."
+                ]
+            },
+            8: {
+                correct: "The Local CBO Representative has low power as they lack formal authority and resources but high interest in supporting out-of-school youth. They should be kept informed as they have grassroots connections, understand target beneficiaries, can mobilize youth participation, and their buy-in helps ensure the program meets real community needs.",
+                options: [
+                    "The CBO Representative has high power through community networks and high interest in youth outcomes. They must be managed closely as they can recruit participants, provide feedback, and ensure community acceptance.",
+                    "This representative has high power to influence youth participation but low interest as they have competing priorities. They should be kept satisfied through recognition and small grants for their organization.",
+                    "The Local CBO Representative has low power as they lack formal authority and resources but high interest in supporting out-of-school youth. They should be kept informed as they have grassroots connections, understand target beneficiaries, can mobilize youth participation, and their buy-in helps ensure the program meets real community needs.",
+                    "The CBO has low power and low interest as they're a small organization focused on their own programs. They should be monitored in case partnership opportunities arise."
+                ]
+            }
+        };
+
+        function StakeholderAssignment() {
+            const [studentName, setStudentName] = useState('');
+            const [studentEmail, setStudentEmail] = useState('');
+            const [selectedStakeholder, setSelectedStakeholder] = useState(null);
+            const [placements, setPlacements] = useState({
+                highHigh: [], highLow: [], lowHigh: [], lowLow: []
+            });
+            const [justifications, setJustifications] = useState({
+                highHigh: { stakeholder: '', justification: '' },
+                highLow: { stakeholder: '', justification: '' },
+                lowHigh: { stakeholder: '', justification: '' },
+                lowLow: { stakeholder: '', justification: '' }
+            });
+            const [error, setError] = useState('');
+            const [success, setSuccess] = useState('');
+            const [grade, setGrade] = useState(null);
+
+            const placedStakeholderIds = Object.values(placements).flat().map(s => s.id);
+
+            const handleSelectStakeholder = (stakeholder) => {
+                if (placedStakeholderIds.includes(stakeholder.id)) return;
+                setSelectedStakeholder(selectedStakeholder?.id === stakeholder.id ? null : stakeholder);
+                setError('');
+            };
+
+            const handlePlaceStakeholder = (quadrant) => {
+                if (!selectedStakeholder) {
+                    setError('Please select a stakeholder first (tap on a stakeholder card)');
+                    return;
+                }
+                
+                setPlacements(prev => ({
+                    ...prev,
+                    [quadrant]: [...prev[quadrant], selectedStakeholder]
+                }));
+                setSelectedStakeholder(null);
+                setError('');
+            };
+
+            const handleRemoveStakeholder = (quadrant, stakeholderId) => {
+                setPlacements(prev => ({
+                    ...prev,
+                    [quadrant]: prev[quadrant].filter(s => s.id !== stakeholderId)
+                }));
+            };
+
+            const handleJustificationChange = (quadrant, field, value) => {
+                setJustifications(prev => ({
+                    ...prev,
+                    [quadrant]: { ...prev[quadrant], [field]: value }
+                }));
+            };
+
+            const checkDuplicateSubmission = (email) => {
+                const submissions = JSON.parse(localStorage.getItem('stakeholderSubmissions') || '[]');
+                return submissions.some(sub => 
+                    sub.studentEmail?.toLowerCase().trim() === email.toLowerCase().trim()
+                );
+            };
+
+            const validateEmail = (email) => {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            };
+
+            const validateSubmission = () => {
+                if (!studentName.trim()) {
+                    setError('Please enter your full name');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return false;
+                }
+                
+                if (!studentEmail.trim()) {
+                    setError('Please enter your email address');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return false;
+                }
+                
+                if (!validateEmail(studentEmail)) {
+                    setError('Please enter a valid email address (e.g., student@example.com)');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return false;
+                }
+                
+                if (checkDuplicateSubmission(studentEmail)) {
+                    setError(`⚠️ DUPLICATE SUBMISSION BLOCKED: The email "${studentEmail}" has already been used. Each student can only submit ONCE. If you believe this is an error, contact your instructor.`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return false;
+                }
+                
+                if (placedStakeholderIds.length !== 8) {
+                    setError('Please place all 8 stakeholders in the grid');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return false;
+                }
+
+                for (const quadrant in justifications) {
+                    if (!justifications[quadrant].stakeholder || !justifications[quadrant].justification) {
+                        setError('Please select one stakeholder and justification from each quadrant');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        return false;
+                    }
+                }
+
+                setError('');
+                return true;
+            };
+
+            const calculateGrade = () => {
+                let placementsScore = 0;
+                let justificationsScore = 0;
+
+                Object.entries(placements).forEach(([quadrant, stakeholders]) => {
+                    stakeholders.forEach(s => {
+                        if (s.correctQuadrant === quadrant) {
+                            placementsScore++;
+                        }
+                    });
+                });
+
+                Object.entries(justifications).forEach(([quadrant, data]) => {
+                    const stakeholderId = parseInt(data.stakeholder);
+                    const correctJustification = JUSTIFICATIONS[stakeholderId].correct;
+                    if (data.justification === correctJustification) {
+                        justificationsScore += 3;
+                    }
+                });
+
+                return {
+                    placements: placementsScore,
+                    justifications: justificationsScore,
+                    total: placementsScore + justificationsScore
+                };
+            };
+
+            const handleSubmit = () => {
+                if (!validateSubmission()) return;
+
+                const confirmMessage = `⚠️ FINAL CONFIRMATION\n\nName: ${studentName}\nEmail: ${studentEmail}\n\nIMPORTANT: You can only submit ONCE per email address. After submission, you cannot change your answers.\n\nAre you sure you want to submit?`;
+                
+                if (!window.confirm(confirmMessage)) {
+                    return;
+                }
+
+                const gradeResult = calculateGrade();
+                setGrade(gradeResult);
+
+                const submission = {
+                    studentName,
+                    studentEmail,
+                    placements,
+                    justifications,
+                    grade: gradeResult,
+                    timestamp: new Date().toISOString()
+                };
+
+                const submissions = JSON.parse(localStorage.getItem('stakeholderSubmissions') || '[]');
+                submissions.push(submission);
+                localStorage.setItem('stakeholderSubmissions', JSON.stringify(submissions));
+
+                setSuccess(`✅ Assignment submitted successfully! Your grade: ${gradeResult.total}/20`);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const getPerformanceLevel = (total) => {
+                if (total >= 18) return "Excellent Work! 🌟";
+                if (total >= 15) return "Great Job! ⭐";
+                if (total >= 12) return "Good Effort! ✓";
+                return "Keep Learning! 📚";
+            };
+
+            if (grade) {
+                return (
+                    <div className="container">
+                        <div className="header">
+                            <div className="logo">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a472a'/%3E%3Cpath d='M50 20 L55 40 L75 40 L60 52 L65 72 L50 60 L35 72 L40 52 L25 40 L45 40 Z' fill='%232ecc71'/%3E%3C/svg%3E" alt="Logo" />
+                            </div>
+                            <h1>Grade Received!</h1>
+                            <div className="subtitle">Green Living Innovations - Stakeholder Analysis</div>
+                        </div>
+                        
+                        <div className="content">
+                            {success && <div className="success-message">{success}</div>}
+                            
+                            <div className="grade-display">
+                                <h2>{grade.total}/20</h2>
+                                <p>{getPerformanceLevel(grade.total)}</p>
+                                <div className="grade-breakdown">
+                                    <div className="grade-item">
+                                        <div className="grade-item-label">Part A: Placements</div>
+                                        <div className="grade-item-value">{grade.placements}/8</div>
+                                    </div>
+                                    <div className="grade-item">
+                                        <div className="grade-item-label">Part B: Justifications</div>
+                                        <div className="grade-item-value">{grade.justifications}/12</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ background: 'rgba(46, 204, 113, 0.1)', padding: '1.25rem', borderRadius: '8px', marginTop: '1.5rem' }}>
+                                <strong style={{ color: 'var(--primary)', display: 'block', marginBottom: '0.5rem' }}>📸 IMPORTANT - Next Steps:</strong>
+                                <p style={{ fontSize: '0.95rem', marginBottom: '0.5rem' }}>1. Take a SCREENSHOT of this page showing your grade</p>
+                                <p style={{ fontSize: '0.95rem', marginBottom: '0.5rem' }}>2. Email the screenshot to: <strong>ericmwansa06@gmail.com</strong></p>
+                                <p style={{ fontSize: '0.95rem' }}>3. Subject line: "Stakeholder Assignment - {studentName}"</p>
+                            </div>
+                            
+                            <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--cream)', borderRadius: '8px' }}>
+                                <strong style={{ display: 'block', marginBottom: '0.5rem' }}>Submission Details:</strong>
+                                <p style={{ fontSize: '0.9rem' }}>Name: {studentName}</p>
+                                <p style={{ fontSize: '0.9rem' }}>Email: {studentEmail}</p>
+                                <p style={{ fontSize: '0.9rem' }}>Time: {new Date().toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <div className="logo">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%231a472a'/%3E%3Cpath d='M50 20 L55 40 L75 40 L60 52 L65 72 L50 60 L35 72 L40 52 L25 40 L45 40 Z' fill='%232ecc71'/%3E%3C/svg%3E" alt="Logo" />
+                        </div>
+                        <h1>Stakeholder Analysis Assignment</h1>
+                        <div className="subtitle">Green Living Innovations - Mobile Friendly Version</div>
+                    </div>
+
+                    <div className="content">
+                        <div className="warning-box">
+                            <strong>⚠️ ONE SUBMISSION PER EMAIL ADDRESS</strong>
+                            <p>You can only submit this assignment ONCE using your email address. Make sure all your answers are correct before submitting!</p>
+                        </div>
+
+                        {error && <div className="error-message">{error}</div>}
+
+                        <div className="input-group">
+                            <label>Full Name (First, Middle, Last) *</label>
+                            <input
+                                type="text"
+                                placeholder="Enter your full name"
+                                value={studentName}
+                                onChange={(e) => setStudentName(e.target.value)}
+                            />
+                        </div>
+                        
+                        <div className="input-group">
+                            <label>Email Address (Student Email) *</label>
+                            <input
+                                type="email"
+                                placeholder="student@example.com"
+                                value={studentEmail}
+                                onChange={(e) => setStudentEmail(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="section">
+                            <h3>Part A: Place Stakeholders (8 Marks)</h3>
+                            <p className="section-description">
+                                <strong>How to use:</strong> Tap a stakeholder card to select it (it will turn green), then tap one of the quadrant buttons to place it there.
+                            </p>
+                            
+                            <div className="instruction-hint">
+                                💡 <strong>Tip:</strong> {selectedStakeholder ? `Selected: #${selectedStakeholder.id}. Now tap a quadrant button below to place it!` : 'Tap any stakeholder card below to select it first.'}
+                            </div>
+
+                            {STAKEHOLDERS.map(stakeholder => (
+                                <div
+                                    key={stakeholder.id}
+                                    className={`stakeholder-card ${selectedStakeholder?.id === stakeholder.id ? 'selected' : ''} ${placedStakeholderIds.includes(stakeholder.id) ? 'placed' : ''}`}
+                                    onClick={() => handleSelectStakeholder(stakeholder)}
+                                >
+                                    <div className="stakeholder-header">
+                                        <div className="stakeholder-number">{stakeholder.id}</div>
+                                        <div className="stakeholder-name">{stakeholder.name}</div>
+                                    </div>
+                                    
+                                    {selectedStakeholder?.id === stakeholder.id && !placedStakeholderIds.includes(stakeholder.id) && (
+                                        <div className="quadrant-buttons">
+                                            <button 
+                                                className="quadrant-btn high-high"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePlaceStakeholder('highHigh');
+                                                }}
+                                            >
+                                                {QUADRANTS.highHigh.shortName}
+                                            </button>
+                                            <button 
+                                                className="quadrant-btn high-low"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePlaceStakeholder('highLow');
+                                                }}
+                                            >
+                                                {QUADRANTS.highLow.shortName}
+                                            </button>
+                                            <button 
+                                                className="quadrant-btn low-high"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePlaceStakeholder('lowHigh');
+                                                }}
+                                            >
+                                                {QUADRANTS.lowHigh.shortName}
+                                            </button>
+                                            <button 
+                                                className="quadrant-btn low-low"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePlaceStakeholder('lowLow');
+                                                }}
+                                            >
+                                                {QUADRANTS.lowLow.shortName}
+                                            </button>
+                                        </div>
+                                    )}
+                                    
+                                    {placedStakeholderIds.includes(stakeholder.id) && (
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.5rem' }}>
+                                            ✓ Placed - see summary below
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="placement-summary">
+                            <h4>Your Current Placements ({placedStakeholderIds.length}/8)</h4>
+                            {Object.entries(QUADRANTS).map(([key, quad]) => (
+                                <div key={key} className="quadrant-summary">
+                                    <div className="quadrant-summary-title">{quad.name} - {quad.desc}</div>
+                                    <div className="placed-stakeholders">
+                                        {placements[key].length === 0 && (
+                                            <span style={{ fontSize: '0.85rem', color: 'var(--text-medium)' }}>None yet</span>
+                                        )}
+                                        {placements[key].map(s => (
+                                            <div key={s.id} className="placed-badge">
+                                                #{s.id}
+                                                <button 
+                                                    className="remove-btn"
+                                                    onClick={() => handleRemoveStakeholder(key, s.id)}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="section">
+                            <h3>Part B: Justifications (12 Marks)</h3>
+                            <p className="section-description">
+                                Select ONE stakeholder from each quadrant, then choose the BEST justification (3 marks each)
+                            </p>
+
+                            {Object.entries(QUADRANTS).map(([key, quad]) => (
+                                <div key={key} className="justification-section">
+                                    <h4>{quad.name} - {quad.desc}</h4>
+                                    <select
+                                        value={justifications[key].stakeholder}
+                                        onChange={(e) => {
+                                            handleJustificationChange(key, 'stakeholder', e.target.value);
+                                            handleJustificationChange(key, 'justification', '');
+                                        }}
+                                    >
+                                        <option value="">-- Select a stakeholder --</option>
+                                        {placements[key].map(s => (
+                                            <option key={s.id} value={s.id}>#{s.id} - {s.name}</option>
+                                        ))}
+                                    </select>
+
+                                    {justifications[key].stakeholder && (
+                                        <div className="justification-options">
+                                            {JUSTIFICATIONS[parseInt(justifications[key].stakeholder)].options.map((option, idx) => (
+                                                <label
+                                                    key={idx}
+                                                    className={`justification-option ${justifications[key].justification === option ? 'selected' : ''}`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name={`justification-${key}`}
+                                                        value={option}
+                                                        checked={justifications[key].justification === option}
+                                                        onChange={(e) => handleJustificationChange(key, 'justification', e.target.value)}
+                                                    />
+                                                    <span className="justification-text">{option}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div style={{ marginTop: '2rem' }}>
+                            <button className="submit-btn" onClick={handleSubmit}>
+                                Submit Assignment & Get Grade
+                            </button>
+                            <p style={{ marginTop: '1rem', color: 'var(--text-medium)', fontSize: '0.9rem', textAlign: 'center' }}>
+                                ⚠️ Remember: You can only submit once per email address!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<StakeholderAssignment />, document.getElementById('root'));
+    </script>
+</body>
+</html>
